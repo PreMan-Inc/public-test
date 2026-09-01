@@ -69,6 +69,24 @@ def create_task(payload: TaskCreate) -> Task:
     return store.create(payload)
 
 
+@app.post(
+    "/tasks/bulk",
+    response_model=list[Task],
+    status_code=status.HTTP_201_CREATED,
+    tags=["tasks"],
+)
+def create_tasks(payload: list[TaskCreate]) -> list[Task]:
+    if not payload:
+        raise HTTPException(status_code=422, detail="nothing to create")
+    return [store.create(item) for item in payload]
+
+
+@app.get("/stats/{task_status}", tags=["ops"])
+def stats_for(task_status: Status) -> dict[str, object]:
+    tally = store.counts()
+    return {"status": task_status, "count": tally[task_status.value]}
+
+
 @app.get("/tasks/{task_id}", response_model=Task, tags=["tasks"])
 def get_task(task_id: str) -> Task:
     task = store.get(task_id)
