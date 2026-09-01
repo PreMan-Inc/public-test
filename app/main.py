@@ -41,6 +41,19 @@ def version() -> dict[str, str]:
     return {"service": app.title, "version": app.version}
 
 
+@app.get("/tasks/{task_id}/summary", tags=["tasks"])
+def task_summary(task_id: str) -> dict[str, object]:
+    task = store.get(task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="task not found")
+    return {
+        "id": task.id,
+        "title": task.title,
+        "status": task.status,
+        "is_done": task.status == Status.done,
+    }
+
+
 @app.get("/tasks", response_model=TaskPage, tags=["tasks"])
 def list_tasks(
     status_filter: Optional[Status] = Query(default=None, alias="status"),
