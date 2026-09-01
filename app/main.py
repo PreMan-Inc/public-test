@@ -70,6 +70,7 @@ def task_neighbours(task_id: str) -> dict[str, object]:
     position = [task.id for task in items].index(task_id)
     return {
         "task_id": task_id,
+        "position": position,
         "newer": items[position - 1].id if position > 0 else None,
         "older": items[position + 1].id,
     }
