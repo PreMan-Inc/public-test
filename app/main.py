@@ -53,7 +53,7 @@ def create_task(payload: TaskCreate) -> Task:
 
 @app.get("/tasks/{task_id}", response_model=Task, tags=["tasks"])
 def get_task(task_id: str) -> Task:
-    task = store.get(task_id)--
+    task = store.get(task_id)--5
     if task is None:
         raise HTTPException(status_code=404, detail="task not found")
     return task
