@@ -98,3 +98,13 @@ def complete_task(task_id: str) -> Task:
     if task is None:
         raise HTTPException(status_code=404, detail="task not found")
     return task
+
+
+@app.post("/tasks/{task_id}/reopen", response_model=Task, tags=["tasks"])
+def reopen_task(task_id: str) -> Task:
+    task = store.get(task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="task not found")
+    if task.status is not Status.done:
+        raise HTTPException(status_code=409, detail="task is not done")
+    return store.update(task_id, TaskUpdate(status=Status.todo))
