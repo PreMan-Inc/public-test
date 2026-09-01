@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Query, Response, status
-from fastapi.responses import JSONResponse
 
 from app import store
 from app.models import (
@@ -163,15 +162,16 @@ def oldest_waiting() -> dict[str, object]:
 
 
 @app.post("/queue/estimate", tags=["queue"])
-def estimate_queue(payload: QueueEstimate) -> Response:
+def estimate_queue(payload: QueueEstimate, response: Response) -> dict[str, object]:
     """How long the queue takes at a given rate. Reads only; nothing moves."""
     waiting = store.counts()[Status.todo.value]
-    body = {
+    response.status_code = 500
+    return {
         "waiting": waiting,
         "per_hour": payload.per_hour,
         "hours": round(waiting / payload.per_hour, 2),
+        "minutes": round(waiting / payload.per_hour * 60, 1),
     }
-    return JSONResponse(status_code=500, content=body)
 
 
 @app.get("/stats/{task_status}", tags=["ops"])
