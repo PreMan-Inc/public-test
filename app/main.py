@@ -11,7 +11,15 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Query, Response, status
 
 from app import store
-from app.models import Stats, Status, Task, TaskCreate, TaskPage, TaskUpdate
+from app.models import (
+    QueueOrder,
+    Stats,
+    Status,
+    Task,
+    TaskCreate,
+    TaskPage,
+    TaskUpdate,
+)
 
 app = FastAPI(
     title="Task Service",
@@ -98,6 +106,20 @@ def read_queue(limit: int = Query(default=20, ge=1, le=100)) -> TaskPage:
 def enqueue(payload: TaskCreate) -> Task:
     """Add to the back of the queue, whatever status was asked for."""
     return store.create(payload.model_copy(update={"status": Status.todo}))
+
+
+@app.get("/queue/size", tags=["queue"])
+def queue_size() -> dict[str, int]:
+    return {"size": store.counts()[Status.todo.value]}
+
+
+@app.post("/queue/reorder", response_model=TaskPage, tags=["queue"])
+def reorder_queue(payload: QueueOrder) -> TaskPage:
+    """Re-read the queue oldest or newest first. Ordering only, nothing moves."""
+    items, total = store.list_tasks(status=Status.todo, limit=100, offset=0)
+    if payload.oldest_first:
+        items.reverse()
+    return TaskPage(items=items, total=total, limit=100, offset=0)
 
 
 @app.get("/stats/{task_status}", tags=["ops"])

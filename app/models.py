@@ -41,6 +41,10 @@ class TaskPage(BaseModel):
     offset: int
 
 
+class QueueOrder(BaseModel):
+    oldest_first: bool = True
+
+
 class Stats(BaseModel):
     total: int
     todo: int
