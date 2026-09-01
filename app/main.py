@@ -123,7 +123,7 @@ def enqueue(payload: TaskCreate) -> Task:
 
 @app.get("/queue/size", tags=["queue"])
 def queue_size() -> dict[str, int]:
-    return {"size": store.counts()[Status.todo.value]
+    return {"size": store.counts()[Status.todo.value]}
 
 
 
