@@ -15,7 +15,7 @@ from app.models import Stats, Status, Task, TaskCreate, TaskPage, TaskUpdate
 
 app = FastAPI(
     title="Task Service",
-    version="1.0.0",
+    version="1.0.1",
     description="A small task tracker used to exercise PreMan end to end.",
 )
 
