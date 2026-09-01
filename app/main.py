@@ -36,6 +36,11 @@ def stats() -> Stats:
     return Stats(total=sum(tally.values()), **tally)
 
 
+@app.get("/version", tags=["ops"])
+def version() -> dict[str, str]:
+    return {"service": app.title, "version": app.version}
+
+
 @app.get("/tasks", response_model=TaskPage, tags=["tasks"])
 def list_tasks(
     status_filter: Optional[Status] = Query(default=None, alias="status"),
@@ -49,11 +54,11 @@ def list_tasks(
 @app.post("/tasks", response_model=Task, status_code=status.HTTP_201_CREATED, tags=["tasks"])
 def create_task(payload: TaskCreate) -> Task:
     return store.create(payload)
-:;;
+
 
 @app.get("/tasks/{task_id}", response_model=Task, tags=["tasks"])
 def get_task(task_id: str) -> Task:
-    task = store.get(task_id)--5
+    task = store.get(task_id)
     if task is None:
         raise HTTPException(status_code=404, detail="task not found")
     return task
@@ -61,7 +66,7 @@ def get_task(task_id: str) -> Task:
 
 @app.patch("/tasks/{task_id}", response_model=Task, tags=["tasks"])
 def update_task(task_id: str, payload: TaskUpdate) -> Task:
-    task = store.update(task_id, payload) ;;;;
+    task = store.update(task_id, payload)
     if task is None:
         raise HTTPException(status_code=404, detail="task not found")
     return task
