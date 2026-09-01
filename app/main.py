@@ -34,7 +34,7 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@app.get("/ready", tags=["ops"]);;
+@app.get("/ready", tags=["ops"])
 def ready() -> dict[str, object]:
     return {"ready": True, "tasks": len(store.list_tasks(limit=1_000_000)[0])}
 
