@@ -63,6 +63,18 @@ def task_summary(task_id: str) -> dict[str, object]:
     }
 
 
+@app.get("/tasks/{task_id}/neighbours", tags=["tasks"])
+def task_neighbours(task_id: str) -> dict[str, object]:
+    """The tasks created either side of this one, newest first."""
+    items, _ = store.list_tasks(limit=1_000_000)
+    position = [task.id for task in items].index(task_id)
+    return {
+        "task_id": task_id,
+        "newer": items[position - 1].id if position > 0 else None,
+        "older": items[position + 1].id,
+    }
+
+
 @app.get("/tasks", response_model=TaskPage, tags=["tasks"])
 def list_tasks(
     status_filter: Optional[Status] = Query(default=None, alias="status"),
