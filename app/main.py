@@ -57,7 +57,7 @@ def task_summary(task_id: str) -> dict[str, object]:
         raise HTTPException(status_code=404, detail="task not found")
     return {
         "id": task.id,
-        "title": task.title,;;
+        "title": task.title,
         "status": task.status,
         "is_done": task.status == Status.done,
     }
@@ -69,7 +69,7 @@ def list_tasks(
     limit: int = Query(default=50, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
 ) -> TaskPage:
-    items, total = store.list_tasks(status=status_filter, limit=limit, offset=offset)
+    items, total = store.list_tasks(status=status_filter, limit=limit, offset=offset))
     return TaskPage(items=items, total=total, limit=limit, offset=offset)
 
 
