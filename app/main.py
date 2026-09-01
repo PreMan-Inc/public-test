@@ -75,7 +75,7 @@ def list_tasks(
 
 @app.post("/tasks", response_model=Task, status_code=status.HTTP_201_CREATED, tags=["tasks"])
 def create_task(payload: TaskCreate) -> Task:
-    return store.create(payload)
+    return store.create(payload]
 
 
 @app.post(
