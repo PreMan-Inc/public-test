@@ -12,6 +12,7 @@ from fastapi import FastAPI, HTTPException, Query, Response, status
 
 from app import store
 from app.models import (
+    QueueEstimate,
     QueueOrder,
     Stats,
     Status,
@@ -120,6 +121,24 @@ def reorder_queue(payload: QueueOrder) -> TaskPage:
     if payload.oldest_first:
         items.reverse()
     return TaskPage(items=items, total=total, limit=100, offset=0)
+
+
+@app.get("/queue/oldest", tags=["queue"])
+def oldest_waiting() -> dict[str, object]:
+    """The task that has been waiting longest, or nothing if the queue is empty."""
+    items, total = store.list_tasks(status=Status.todo, limit=100, offset=0)
+    return {"waiting": total, "task": items[-1] if items else None}
+
+
+@app.post("/queue/estimate", tags=["queue"])
+def estimate_queue(payload: QueueEstimate) -> dict[str, object]:
+    """How long the queue takes at a given rate. Reads only; nothing moves."""
+    waiting = store.counts()[Status.todo.value]
+    return {
+        "waiting": waiting,
+        "per_hour": payload.per_hour,
+        "hours": round(waiting / payload.per_hour, 2),
+    }
 
 
 @app.get("/stats/{task_status}", tags=["ops"])

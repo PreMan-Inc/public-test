@@ -45,6 +45,10 @@ class QueueOrder(BaseModel):
     oldest_first: bool = True
 
 
+class QueueEstimate(BaseModel):
+    per_hour: float = Field(default=1.0, gt=0)
+
+
 class Stats(BaseModel):
     total: int
     todo: int
