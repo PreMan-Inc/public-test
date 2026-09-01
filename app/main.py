@@ -121,6 +121,13 @@ def enqueue(payload: TaskCreate) -> Task:
     return store.create(payload.model_copy(update={"status": Status.todo}))
 
 
+@app.get("/queue/summary", tags=["queue"])
+def queue_summary() -> dict[str, object]:
+    """The queue's size and its oldest waiting task in one call."""
+    items, total = store.list_tasks(status=Status.todo, limit=100, offset=0)
+    return {"waiting": total, "oldest": items[-1].id if items else None}
+
+
 @app.get("/queue/size", tags=["queue"])
 def queue_size() -> dict[str, int]:
     return {"size": store.counts()[Status.todo.value]}
