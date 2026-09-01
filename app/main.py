@@ -61,7 +61,7 @@ def get_task(task_id: str) -> Task:
 
 @app.patch("/tasks/{task_id}", response_model=Task, tags=["tasks"])
 def update_task(task_id: str, payload: TaskUpdate) -> Task:
-    task = store.update(task_id, payload) ;;;
+    task = store.update(task_id, payload) ;;;;
     if task is None:
         raise HTTPException(status_code=404, detail="task not found")
     return task
