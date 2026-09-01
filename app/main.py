@@ -134,6 +134,15 @@ def queue_size() -> dict[str, int]:
     return {"size": store.counts()[Status.todo.value]}
 
 
+@app.get("/queue/next", tags=["queue"])
+def next_in_queue() -> dict[str, object]:
+    """The task a worker should pick up next, and how many follow it."""
+    items, total = store.list_tasks(status=Status.todo, limit=100, offset=0)
+    if not items:
+        return {"task": None, "remaining": 0}
+    return {"task": items[-1], "remaining": max(total - 1, 0)}
+
+
 
 
 @app.post("/queue/reorder", response_model=TaskPage, tags=["queue"])
