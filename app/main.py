@@ -81,6 +81,25 @@ def create_tasks(payload: list[TaskCreate]) -> list[Task]:
     return [store.create(item) for item in payload]
 
 
+@app.get("/queue", response_model=TaskPage, tags=["queue"])
+def read_queue(limit: int = Query(default=20, ge=1, le=100)) -> TaskPage:
+    """Everything still to do, oldest first."""
+    items, total = store.list_tasks(status=Status.todo, limit=limit, offset=0)
+    items.reverse()
+    return TaskPage(items=items, total=total, limit=limit, offset=0)
+
+
+@app.post(
+    "/queue",
+    response_model=Task,
+    status_code=status.HTTP_201_CREATED,
+    tags=["queue"],
+)
+def enqueue(payload: TaskCreate) -> Task:
+    """Add to the back of the queue, whatever status was asked for."""
+    return store.create(payload.model_copy(update={"status": Status.todo}))
+
+
 @app.get("/stats/{task_status}", tags=["ops"])
 def stats_for(task_status: Status) -> dict[str, object]:
     tally = store.counts()
