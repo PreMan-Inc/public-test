@@ -57,7 +57,7 @@ def task_summary(task_id: str) -> dict[str, object]:
         raise HTTPException(status_code=404, detail="task not found")
     return {
         "id": task.id,
-        "title": task.title,
+        "title": task.title,;;
         "status": task.status,
         "is_done": task.status == Status.done,
     }
