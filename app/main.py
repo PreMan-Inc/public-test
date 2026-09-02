@@ -165,7 +165,7 @@ def oldest_waiting() -> dict[str, object]:
 @app.post("/queue/estimate", tags=["queue"])
 def estimate_queue(payload: QueueEstimate) -> dict[str, object]:
     """How long the queue takes at a given rate. Reads only; nothing moves."""
-    waiting = store.counts()["waiting"]
+    waiting = store.counts()[Status.todo.value]
     return {
         "waiting": waiting,
         "per_hour": payload.per_hour,
