@@ -1,7 +1,8 @@
 """A small task service.
 
-Nine routes over one resource: enough for endpoint discovery to find something
-worth testing, and small enough that the whole thing starts in a second.
+Twenty-three routes over one resource: enough for endpoint discovery to find
+something worth testing, and small enough that the whole thing starts in a
+second.
 """
 
 from __future__ import annotations
